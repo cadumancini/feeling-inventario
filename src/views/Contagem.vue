@@ -1,6 +1,99 @@
 <template>
   <div class="contagem">
     <Navbar/>
+    <div class="mx-3 mt-1">
+      <div class="row mb-1">
+        <div class="border border-2 rounded-3 px-2 py-2">
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group">
+                <span class="input-group-text">Código Produto</span>
+                <input class="form-control" type="text">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group">
+                <span class="input-group-text">Lote</span>
+                <input class="form-control" type="text">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-1">
+        <div class="border border-2 rounded-3 px-2 py-2">
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group">
+                <span class="input-group-text">Cód. Operador</span>
+                <input class="form-control" disabled type="text">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group">
+                <span class="input-group-text">Descrição</span>
+                <input class="form-control" disabled type="text">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group">
+                <span class="input-group-text">Derivação</span>
+                <input class="form-control" disabled type="text">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group">
+                <span class="input-group-text">Unidade</span>
+                <input class="form-control" disabled type="text">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group">
+                <span class="input-group-text">Depósito Atual</span>
+                <input class="form-control" disabled type="text">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group">
+                <span class="input-group-text">Depósito Destino</span>
+                <select class="form-select" id="inputGroupSelect01">
+                  <option selected>Selecione...</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group">
+                <span class="input-group-text">Quantidade ()</span>
+                <input class="form-control" type="text">
+                <span class="input-group-text">Kg</span>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="d-grid gap-2 d-md-block">
+              <button class="btn btn-secondary" type="button">Salvar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
