@@ -23,7 +23,6 @@ export default {
   },
   created () {
     this.api_url = process.env.VUE_APP_API_URL
-    console.log(this.api_url)
   },
   mounted () {
     if (sessionStorage.getItem('token')) {
