@@ -77,17 +77,17 @@
               </div>
             </div>
           </div>
-          <div class="row mb-2">
+          <div class="row mb-4">
             <div class="col">
               <div class="input-group input-group">
-                <span class="input-group-text">Quantidade ()</span>
-                <input class="form-control" type="text">
+                <span class="input-group-text">Quantidade</span>
+                <input class="form-control" type="number">
                 <span class="input-group-text">Kg</span>
               </div>
             </div>
           </div>
           <div class="row mb-2">
-            <div class="d-grid gap-2 d-md-block">
+            <div class="d-grid gap-2">
               <button class="btn btn-secondary" type="button">Salvar</button>
             </div>
           </div>
