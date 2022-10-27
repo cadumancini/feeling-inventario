@@ -104,7 +104,7 @@
 
 <script>
 import Navbar from '../components/Navbar.vue'
-import { StreamBarcodeReader } from "vue-barcode-reader"
+import StreamBarcodeReader from "../components/StreamBarcodeReader.vue"
 
 export default {
   name: 'Contagem',
