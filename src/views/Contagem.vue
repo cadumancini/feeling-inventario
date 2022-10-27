@@ -20,6 +20,11 @@
               </div>
             </div>
           </div>
+          <div class="row mb-2">
+            <div class="col">
+              <StreamBarcodeReader @decode="onDecode" @loaded="onLoaded"></StreamBarcodeReader>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row mb-1">
@@ -99,10 +104,11 @@
 
 <script>
 import Navbar from '../components/Navbar.vue'
+import { StreamBarcodeReader } from "vue-barcode-reader"
 
 export default {
   name: 'Contagem',
-  components: { Navbar },
+  components: { Navbar, StreamBarcodeReader },
   data () {
     return {
       
@@ -114,7 +120,12 @@ export default {
     // }
   },
   methods: {
-    
+    onDecode (text) {
+      alert(text)
+    },
+    onLoaded () {
+      console.log('barcode scanner loaded')
+    }
   }
 }
 </script>
