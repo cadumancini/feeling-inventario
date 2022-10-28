@@ -2,13 +2,16 @@
   <div class="contagem">
     <Navbar/>
     <div class="mx-3 mt-1">
-      <div class="row mb-1">
-        <div class="border border-2 rounded-3 px-2 py-2">
+      <div class="row">
+        <div class="border border-2 rounded-3 px-2 pt-2">
           <div class="row mb-2">
             <div class="col">
               <div class="input-group input-group">
                 <span class="input-group-text">Código Produto</span>
-                <input class="form-control" type="text">
+                <input class="form-control" type="text" v-model="produto">
+                <button class="btn btn-secondary input-group-btn" @click="toggleScanner" data-bs-toggle="modal" data-bs-target="#barcodeModal">
+                  <font-awesome-icon icon="barcode"/>
+                </button>
               </div>
             </div>
           </div>
@@ -20,13 +23,27 @@
               </div>
             </div>
           </div>
-          <div class="row mb-2">
-            <div class="col">
-              <StreamBarcodeReader @decode="onDecode" @loaded="onLoaded"></StreamBarcodeReader>
+        </div>
+      </div>
+
+      <!-- Modal Estilos -->
+      <div class="modal fade" id="barcodeModal" tabindex="-1" aria-labelledby="barcodeModallLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="barcodeModalLabel">Escaneie o produto</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModalBarcode" @click="toggleScanner"></button>
+            </div>
+            <div class="modal-body">
+              <StreamBarcodeReader v-if="isScanning" @decode="onDecode" @loaded="onLoaded"></StreamBarcodeReader>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal" @click="toggleScanner">Fechar</button>
             </div>
           </div>
         </div>
       </div>
+
       <div class="row mb-1">
         <div class="border border-2 rounded-3 px-2 py-2">
           <div class="row mb-2">
@@ -111,7 +128,8 @@ export default {
   components: { Navbar, StreamBarcodeReader },
   data () {
     return {
-      
+      produto: '',
+      isScanning: false
     }
   },
   mounted () {
@@ -121,10 +139,14 @@ export default {
   },
   methods: {
     onDecode (text) {
-      alert(text)
+      document.getElementById('closeModalBarcode').click()
+      this.produto = text
     },
     onLoaded () {
       console.log('barcode scanner loaded')
+    },
+    toggleScanner () {
+      this.isScanning = !this.isScanning
     }
   }
 }
@@ -155,9 +177,6 @@ export default {
     width: 2rem;
     margin-left: 1px;
     margin-right: 1px;
-  }
-  .btn-busca {
-    width: 1.75rem !important;
   }
   .sm {
     font-size: 0.8rem !important;
