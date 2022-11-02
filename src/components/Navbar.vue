@@ -3,7 +3,7 @@
     <h1 class="h5 mx-2 pt-2">Movimentação de estoque</h1>
     <ul class="navbar-nav ms-auto mx-2">
       <li class="nav-item">
-        <a class="nav-link btn btn-sm btn-secondary btn-dismiss ms-2 px-2" @click="logout">Cancelar</a>
+        <a class="nav-link btn btn-sm btn-secondary btn-dismiss ms-2 px-2" @click="logout">Sair</a>
       </li>
     </ul>
   </nav>
