@@ -6,20 +6,34 @@
         <div class="border border-2 rounded-3 px-2 pt-2">
           <div class="row mb-2">
             <div class="col">
-              <div class="input-group input-group">
-                <span class="input-group-text">Código Produto</span>
-                <input class="form-control" type="text" v-model="produto" ref="inputProduto">
-                <button class="btn btn-secondary input-group-btn" @click="toggleScanner" data-bs-toggle="modal" data-bs-target="#barcodeModal">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text">Cód. de Barras</span>
+                <input class="form-control" type="text" v-on:keyup.enter="onEnter" v-model="codBarrasCab" ref="inputCodBarras">
+                <!-- <button class="btn btn-secondary input-group-btn" @click="toggleScanner" data-bs-toggle="modal" data-bs-target="#barcodeModal">
                   <font-awesome-icon icon="barcode"/>
-                </button>
+                </button> -->
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-8">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text">Produto</span>
+                <input class="form-control" type="text" v-model="produtoCab">
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text">Der.</span>
+                <input class="form-control" type="text" v-model="derivacaoCab">
               </div>
             </div>
           </div>
           <div class="row mb-2">
             <div class="col">
-              <div class="input-group input-group">
+              <div class="input-group input-group-sm">
                 <span class="input-group-text">Lote</span>
-                <input class="form-control" type="text">
+                <input class="form-control" type="text" v-model="loteCab">
               </div>
             </div>
           </div>
@@ -53,7 +67,7 @@
         <div class="border border-2 rounded-3 px-2 py-2">
           <div class="row mb-2">
             <div class="col">
-              <div class="input-group input-group">
+              <div class="input-group input-group-sm">
                 <span class="input-group-text">Cód. Operador</span>
                 <input class="form-control" disabled type="text">
               </div>
@@ -61,7 +75,15 @@
           </div>
           <div class="row mb-2">
             <div class="col">
-              <div class="input-group input-group">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text">Produto</span>
+                <input class="form-control" v-model="produto" disabled type="text">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group-sm">
                 <span class="input-group-text">Descrição</span>
                 <input class="form-control" v-model="descricao" disabled type="text">
               </div>
@@ -69,7 +91,7 @@
           </div>
           <div class="row mb-2">
             <div class="col">
-              <div class="input-group input-group">
+              <div class="input-group input-group-sm">
                 <span class="input-group-text">Derivação</span>
                 <input class="form-control" v-model="derivacao" disabled type="text">
               </div>
@@ -77,7 +99,7 @@
           </div>
           <div class="row mb-2">
             <div class="col">
-              <div class="input-group input-group">
+              <div class="input-group input-group-sm">
                 <span class="input-group-text">Unidade</span>
                 <input class="form-control" v-model="unidade" disabled type="text">
               </div>
@@ -85,7 +107,7 @@
           </div>
           <div class="row mb-2">
             <div class="col">
-              <div class="input-group input-group">
+              <div class="input-group input-group-sm">
                 <span class="input-group-text">Depósito Atual</span>
                 <input class="form-control" v-model="depositoAtu" disabled type="text">
               </div>
@@ -93,7 +115,7 @@
           </div>
           <div class="row mb-2">
             <div class="col">
-              <div class="input-group input-group">
+              <div class="input-group input-group-sm">
                 <span class="input-group-text">Depósito Destino</span>
                 <select id="depositosList" class="form-select" :disabled="produtoInv === null">
                   <option selected disabled value="0">Selecione...</option>
@@ -104,7 +126,7 @@
           </div>
           <div class="row mb-2">
             <div class="col">
-              <div class="input-group input-group">
+              <div class="input-group input-group-sm">
                 <span class="input-group-text">Quantidade</span>
                 <input class="form-control" type="number" :disabled="produtoInv === null">
                 <span class="input-group-text">{{this.unidade || '-'}}</span>
@@ -144,7 +166,10 @@ export default {
     return {
       api_url: '',
       token: '',
-      produto: '',
+      codBarrasCab: '',
+      produtoCab: '',
+      derivacaoCab: '',
+      lotCab: '',
       descricao: '',
       derivacao: '',
       unidade: '',
@@ -162,7 +187,7 @@ export default {
     if (!sessionStorage.getItem('token')) {
       this.$router.push({ name: 'Login' })
     }
-    this.$refs.inputProduto.focus()
+    this.$refs.inputCodBarras.focus()
   },
   methods: {
     checkInvalidLoginResponse (response) {
@@ -174,17 +199,30 @@ export default {
     },
     onDecode (text) {
       document.getElementById('closeModalBarcode').click()
-      this.produto = text
+      this.codBarrasCab = text
     },
     onLoaded () {
       console.log('barcode scanner loaded')
+    },
+    onEnter () {
+      const regex = /.*[.].*[.].*/
+      if(regex.test(this.codBarrasCab)) {
+        const partes = this.codBarrasCab.split('.')
+        this.loteCab = partes[0]
+        this.produtoCab = partes[1]
+        this.derivacaoCab = partes[2]
+
+        this.codBarrasCab = ''
+      } else {
+        alert('Código de barras com formato inválido!')
+      }
     },
     toggleScanner () {
       this.isScanning = !this.isScanning
     },
     buscarProduto () {
-      if (this.produto === '') {
-        alert('Favor preencher o produto!')
+      if ((this.produtoCab === '' || this.derivacaoCab === '') && (this.loteCab === '')) {
+        alert('Favor preencher o produto e derivação, ou lote!')
       } else {
         this.produtoInv = null
         this.descricao = ''
@@ -195,17 +233,18 @@ export default {
 
         document.getElementsByTagName('body')[0].style.cursor = 'wait'
         document.getElementById('btnBuscar').disabled = true
-        const partes = this.produto.split('.')
-        const codPro = partes[1]
-        const codDer = partes[2]
+
+        const url = (this.produtoCab !== '' && this.derivacaoCab !== '') ? this.api_url + '/dadosProdutoDerivacao?token=' + this.token + '&emp=1&pro=' + this.produtoCab + '&der=' + this.derivacaoCab :
+                                                                           this.api_url + '/dadosLote?token=' + this.token + '&emp=1&lote=' + this.loteCab
         
-        axios.get(this.api_url + '/dadosProdutoDerivacao?token=' + this.token + '&emp=1&pro=' + codPro + '&der=' + codDer)
+        axios.get(url)
           .then((response) => {
             this.checkInvalidLoginResponse(response.data)
             if(response.data.dados.length === 0) {
               alert('Nenhum produto encontrado!')
             } else {
               this.produtoInv = response.data.dados[0]
+              this.produto = this.produtoInv.CODPRO
               this.descricao = this.produtoInv.DESNFV
               this.derivacao = this.produtoInv.CODDER + ' - ' + this.produtoInv.DESCPL
               this.unidade = this.produtoInv.UNIMED
@@ -233,7 +272,10 @@ export default {
       }
     },
     cancelar () {
-      this.produto = ''
+      this.codBarrasCab = ''
+      this.produtoCab = ''
+      this.derivacaoCab = ''
+      this.loteCab = ''
       this.produtoInv = null
       this.descricao = ''
       this.derivacao = ''
@@ -241,7 +283,7 @@ export default {
       this.depositoAtu = ''
       this.depositos = null
       document.getElementById('depositosList').value='0'
-      this.$refs.inputProduto.focus()
+      this.$refs.inputCodBarras.focus()
     }
   }
 }
