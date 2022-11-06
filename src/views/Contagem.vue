@@ -69,7 +69,7 @@
             <div class="col">
               <div class="input-group input-group-sm">
                 <span class="input-group-text">Cód. Operador</span>
-                <input class="form-control" disabled type="text">
+                <input class="form-control" disabled type="text" v-model="operador">
               </div>
             </div>
           </div>
@@ -169,7 +169,10 @@ export default {
       codBarrasCab: '',
       produtoCab: '',
       derivacaoCab: '',
-      lotCab: '',
+      loteCab: '',
+      numCad: '',
+      nomOpe: '',
+      operador: '',
       descricao: '',
       derivacao: '',
       unidade: '',
@@ -186,8 +189,19 @@ export default {
   mounted () {
     if (!sessionStorage.getItem('token')) {
       this.$router.push({ name: 'Login' })
+    } else {
+      this.$refs.inputCodBarras.focus()
+
+      axios.get(this.api_url + '/cadastro?token=' + this.token)
+        .then((response) => {
+          this.checkInvalidLoginResponse(response.data)
+          const operador = response.data.operador
+          console.log(operador)
+          this.numCad = operador[0].NUMCAD
+          this.nomOpe = operador[0].NOMOPE
+          this.operador = this.numCad + ' - ' + this.nomOpe
+        })
     }
-    this.$refs.inputCodBarras.focus()
   },
   methods: {
     checkInvalidLoginResponse (response) {
