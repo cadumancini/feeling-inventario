@@ -106,10 +106,17 @@
             </div>
           </div>
           <div class="row mb-2">
-            <div class="col">
+            <div class="col-6">
               <div class="input-group input-group-sm">
                 <span class="input-group-text">Depósito Atual</span>
                 <input class="form-control" v-model="depositoAtu" disabled type="text">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text">Qtde. Estoque</span>
+                <input class="form-control" v-model="qtdeEstoque" disabled type="text">
+                <span class="input-group-text">{{this.unidade || '-'}}</span>
               </div>
             </div>
           </div>
@@ -177,6 +184,7 @@ export default {
       derivacao: '',
       unidade: '',
       depositoAtu: '',
+      qtdeEstoque: '',
       depositos: null,
       isScanning: false,
       produtoInv: null
@@ -243,6 +251,7 @@ export default {
         this.derivacao = ''
         this.unidade = ''
         this.depositoAtu = ''
+        this.qtdeEstoque = ''
         this.depositos = null
 
         document.getElementsByTagName('body')[0].style.cursor = 'wait'
@@ -267,11 +276,19 @@ export default {
                                   this.produtoInv.DEPFAM !== ' ' ? this.produtoInv.DEPFAM :
                                   this.produtoInv.DEPORI
                                 
-              axios.get(this.api_url + '/depositos?token=' + this.token + '&pro=' + codPro + '&der=' + codDer)
+              axios.get(this.api_url + '/depositos?token=' + this.token + '&pro=' + this.produtoCab + '&der=' + this.derivacaoCab)
                 .then((response) => {
                   this.checkInvalidLoginResponse(response.data)
                   if (response.data.dados.length > 0) {
                     this.depositos = response.data.dados
+                  }
+                })
+
+              axios.get(this.api_url + '/estoque?token=' + this.token + '&pro=' + this.produtoCab + '&der=' + this.derivacaoCab + '&dep=' + this.depositoAtu)
+                .then((response) => {
+                  this.checkInvalidLoginResponse(response.data)
+                  if (response.data.dados.length > 0) {
+                    this.qtdeEstoque = response.data.dados[0].QTDEST
                   }
                 })
              }
@@ -295,6 +312,7 @@ export default {
       this.derivacao = ''
       this.unidade = ''
       this.depositoAtu = ''
+      this.qtdeEstoque = ''
       this.depositos = null
       document.getElementById('depositosList').value='0'
       this.$refs.inputCodBarras.focus()
