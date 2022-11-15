@@ -135,14 +135,14 @@
             <div class="col">
               <div class="input-group input-group-sm">
                 <span class="input-group-text">Quantidade</span>
-                <input class="form-control" type="number" :disabled="produtoInv === null">
+                <input class="form-control" v-model="qtdeCon" type="number" :disabled="produtoInv === null">
                 <span class="input-group-text">{{this.unidade || '-'}}</span>
               </div>
             </div>
           </div>
           <div class="row mb-2">
             <div class="d-grid gap-2">
-              <button class="btn btn-secondary" type="button" :disabled="produtoInv === null">Salvar</button>
+              <button id="btnSalvar" class="btn btn-secondary" type="button" @click="realizarContagem" :disabled="produtoInv === null">Salvar</button>
             </div>
           </div>
         </div>
@@ -181,10 +181,12 @@ export default {
       nomOpe: '',
       operador: '',
       descricao: '',
+      produto: '',
       derivacao: '',
       unidade: '',
       depositoAtu: '',
       qtdeEstoque: '',
+      qtdeCon: '',
       depositos: null,
       isScanning: false,
       produtoInv: null
@@ -204,7 +206,6 @@ export default {
         .then((response) => {
           this.checkInvalidLoginResponse(response.data)
           const operador = response.data.operador
-          console.log(operador)
           this.numCad = operador[0].NUMCAD
           this.nomOpe = operador[0].NOMOPE
           this.operador = this.numCad + ' - ' + this.nomOpe
@@ -243,21 +244,23 @@ export default {
       this.isScanning = !this.isScanning
     },
     buscarProduto () {
-      if ((this.produtoCab === '' || this.derivacaoCab === '') && (this.loteCab === '')) {
-        alert('Favor preencher o produto e derivação, ou lote!')
+      if (this.produtoCab === '' && this.loteCab === '') {
+        alert('Favor preencher o produto  ou lote!')
       } else {
         this.produtoInv = null
         this.descricao = ''
+        this.produto = ''
         this.derivacao = ''
         this.unidade = ''
         this.depositoAtu = ''
         this.qtdeEstoque = ''
         this.depositos = null
+        this.derivacaoCab == '' ? this.derivacaoCab = ' ' : ''
 
         document.getElementsByTagName('body')[0].style.cursor = 'wait'
         document.getElementById('btnBuscar').disabled = true
 
-        const url = (this.produtoCab !== '' && this.derivacaoCab !== '') ? this.api_url + '/dadosProdutoDerivacao?token=' + this.token + '&emp=1&pro=' + this.produtoCab + '&der=' + this.derivacaoCab :
+        const url = (this.produtoCab !== '' && this.derivacaoCab !== '') ? this.api_url + '/dadosProdutoDerivacao?token=' + this.token + '&emp=1&der=' + this.derivacaoCab + '&pro=' + this.produtoCab :
                                                                            this.api_url + '/dadosLote?token=' + this.token + '&emp=1&lote=' + this.loteCab
         
         axios.get(url)
@@ -276,7 +279,7 @@ export default {
                                   this.produtoInv.DEPFAM !== ' ' ? this.produtoInv.DEPFAM :
                                   this.produtoInv.DEPORI
                                 
-              axios.get(this.api_url + '/depositos?token=' + this.token + '&pro=' + this.produtoCab + '&der=' + this.derivacaoCab)
+              axios.get(this.api_url + '/depositos?token=' + this.token + '&der=' + this.produtoInv.CODDER + '&pro=' + this.produtoInv.CODPRO)
                 .then((response) => {
                   this.checkInvalidLoginResponse(response.data)
                   if (response.data.dados.length > 0) {
@@ -284,7 +287,7 @@ export default {
                   }
                 })
 
-              axios.get(this.api_url + '/estoque?token=' + this.token + '&pro=' + this.produtoCab + '&der=' + this.derivacaoCab + '&dep=' + this.depositoAtu)
+              axios.get(this.api_url + '/estoque?token=' + this.token + '&pro=' + this.produtoInv.CODPRO + '&der=' + this.produtoInv.CODDER + '&dep=' + this.depositoAtu + '&lot=' + this.loteCab)
                 .then((response) => {
                   this.checkInvalidLoginResponse(response.data)
                   if (response.data.dados.length > 0) {
@@ -302,6 +305,38 @@ export default {
           })
       }
     },
+    realizarContagem () {
+      var depositosList = document.getElementById('depositosList');
+      var depositoDest = depositosList.options[depositosList.selectedIndex].value;
+
+      document.getElementsByTagName('body')[0].style.cursor = 'wait'
+      document.getElementById('btnBuscar').disabled = true
+
+      this.qtdeCon = String(this.qtdeCon).replace('.', ',')
+      axios.post(this.api_url + '/contagem?token=' + this.token + '&pro=' + this.produtoInv.CODPRO + '&der=' + this.produtoInv.CODDER + '&lot=' + this.loteCab +
+                                            '&depOri=' + this.depositoAtu + '&depDes=' + depositoDest + '&qtdMov=' + this.qtdeCon)
+        .then(response => {
+          this.checkInvalidLoginResponse(response.data)
+          if(response.data.includes('<mensagemRetorno>Processado com Sucesso.</mensagemRetorno>')) {
+            alert('Contagem realizada com sucesso!')
+            this.cancelar()
+          } else {
+            var errorMsg = response.data
+            const pos1 = response.data.indexOf('<mensagemRetorno>')
+            const pos2 = response.data.indexOf('</mensagemRetorno>')
+            alert(errorMsg.substring((pos1 + 17), pos2))
+            this.cancelar()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+          document.getElementsByTagName('body')[0].style.cursor = 'auto'
+          document.getElementById('btnBuscar').disabled = false
+        })
+
+    },
     cancelar () {
       this.codBarrasCab = ''
       this.produtoCab = ''
@@ -309,10 +344,12 @@ export default {
       this.loteCab = ''
       this.produtoInv = null
       this.descricao = ''
+      this.produto = ''
       this.derivacao = ''
       this.unidade = ''
       this.depositoAtu = ''
       this.qtdeEstoque = ''
+      this.qtdeCon = ''
       this.depositos = null
       document.getElementById('depositosList').value='0'
       this.$refs.inputCodBarras.focus()
