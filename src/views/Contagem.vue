@@ -228,12 +228,20 @@ export default {
       console.log('barcode scanner loaded')
     },
     onEnter () {
-      const regex = /.*[.].*[.].*/
-      if(regex.test(this.codBarrasCab)) {
+      const regexLote = /^[a-zA-Z0-9]*[.][a-zA-Z0-9]*[.][a-zA-Z0-9]*$/
+      const regexProd = /^[a-zA-Z0-9]*[.][a-zA-Z0-9]*$/
+      if (regexLote.test(this.codBarrasCab)) {
         const partes = this.codBarrasCab.split('.')
         this.loteCab = partes[0]
-        this.produtoCab = partes[1]
-        this.derivacaoCab = partes[2]
+        this.produtoCab = ''
+        this.derivacaoCab = ''
+
+        this.codBarrasCab = ''
+      } else if (regexProd.test(this.codBarrasCab)) {
+        const partes = this.codBarrasCab.split('.')
+        this.loteCab = ''
+        this.produtoCab = partes[0]
+        this.derivacaoCab = partes[1]
 
         this.codBarrasCab = ''
       } else {
