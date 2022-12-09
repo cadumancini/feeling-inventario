@@ -98,18 +98,10 @@
             </div>
           </div>
           <div class="row mb-2">
-            <div class="col">
+            <div class="col-6">
               <div class="input-group input-group-sm">
                 <span class="input-group-text">Unidade</span>
                 <input class="form-control" v-model="unidade" disabled type="text">
-              </div>
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-6">
-              <div class="input-group input-group-sm">
-                <span class="input-group-text">Depósito Atual</span>
-                <input class="form-control" v-model="depositoAtu" disabled type="text">
               </div>
             </div>
             <div class="col-6">
@@ -117,6 +109,14 @@
                 <span class="input-group-text">Qtde. Estoque</span>
                 <input class="form-control" v-model="qtdeEstoque" disabled type="text">
                 <span class="input-group-text">{{this.unidade || '-'}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text">Depósito Atual</span>
+                <input class="form-control" v-model="depositoAtu" disabled type="text">
               </div>
             </div>
           </div>
@@ -330,9 +330,17 @@ export default {
             this.cancelar()
           } else {
             var errorMsg = response.data
-            const pos1 = response.data.indexOf('<mensagemRetorno>')
-            const pos2 = response.data.indexOf('</mensagemRetorno>')
-            alert(errorMsg.substring((pos1 + 17), pos2))
+            let pos1 = response.data.indexOf('<mensagemRetorno>')
+            let pos2 = response.data.indexOf('</mensagemRetorno>')
+            if(pos1 === -1) {
+              pos1 = response.data.indexOf('<erroExecucao>')
+              pos2 = response.data.indexOf('</erroExecucao>')
+            }
+            if (pos1 !== -1) {
+              alert(errorMsg.substring((pos1 + 17), pos2))
+            } else {
+              alert('Erro não identificado ao processar. Favor entrar em contato com o administrador do sistema.')
+            }
             this.cancelar()
           }
         })
