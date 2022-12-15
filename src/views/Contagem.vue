@@ -98,17 +98,16 @@
             </div>
           </div>
           <div class="row mb-2">
-            <div class="col-6">
+            <div class="col-4">
               <div class="input-group input-group-sm">
-                <span class="input-group-text">Unidade</span>
+                <span class="input-group-text">Unid.</span>
                 <input class="form-control" v-model="unidade" disabled type="text">
               </div>
             </div>
-            <div class="col-6">
+            <div class="col-8">
               <div class="input-group input-group-sm">
-                <span class="input-group-text">Qtde. Estoque</span>
+                <span class="input-group-text">Qtde. Est.</span>
                 <input class="form-control" v-model="qtdeEstoque" disabled type="text">
-                <span class="input-group-text">{{this.unidade || '-'}}</span>
               </div>
             </div>
           </div>
